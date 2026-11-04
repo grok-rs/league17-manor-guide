@@ -64,7 +64,7 @@
     route = st.pos === st.goal ? {steps: [], kills: 0, clicks: 0, teleports: 0} : solve(st.pos, st.goal, st.off, {teleport, turned: st.turned});
     $('from').value = st.pos;
     $('tKills').textContent = route ? route.kills : '—';
-    const sec = Math.max(10, +$('sec').value || 75);
+    const sec = Math.max(10, +$('sec').value || 140);
     $('tTime').textContent = route ? fmtTime(route.kills * sec + route.clicks * 2) : '—';
     $('tTp').textContent = route ? route.teleports : '—';
     $('steps').innerHTML = !route ? '<li>Пути нет: включите телепорт.</li>'
