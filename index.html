@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Часы поместья Орлуа — интерактивный гид</title>
+<meta name="description" content="Как работают дверные часы поместья Орлуа в Лиге-17: планировщик кратчайшего пути, карта и тренажёр.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Old+Standard+TT:wght@400;700&family=Golos+Text:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <header class="head">
+    <div class="crumb">Южный Архипелаг ❯ о. Синнабар ❯ Сен-Аспир ❯ Старый квартал ❯ Поместье Орлуа</div>
+    <h1>Часы поместья Орлуа</h1>
+    <p class="lede">На каждой двери поместья висят часы, и открывается она только в полночь. Стрелки двигают победы над Коршаком (#097). Здесь можно построить кратчайший путь в любую комнату и проверить его на карте.</p>
+    <p class="meta">Неофициальный гид игрока. Всё измерено в игре 2 и 4 ноября 2026: 110+ побед над Коршаком и сотни показаний дверей. Время сервера.</p>
+  </header>
+
+  <section id="plan">
+    <h2>Построить маршрут</h2>
+    <div class="planner">
+      <form id="form" class="panel" autocomplete="off">
+        <div class="row two">
+          <label>Откуда<select id="from"></select></label>
+          <label>Куда<select id="to"></select></label>
+        </div>
+        <button type="button" id="swap" class="ghost">Поменять местами</button>
+
+        <fieldset>
+          <legend>Где сейчас стрелки?</legend>
+          <label class="check"><input type="radio" name="clock" value="zero" checked> Сброшены: вы только что прошли дверь или лестницу</label>
+          <label class="check"><input type="radio" name="clock" value="door"> Посмотрю по двери</label>
+          <div id="helper" class="helper" hidden>
+            <p>Нажмите в игре любую закрытую дверь. Игра ответит «На часах 16:00» и никуда вас не переместит. Укажите эту дверь и время:</p>
+            <div class="row two">
+              <label>Дверь<select id="hDoor"></select></label>
+              <label>На часах<select id="hHour"></select></label>
+            </div>
+            <p id="hOut" class="note"></p>
+          </div>
+        </fieldset>
+
+        <label class="check"><input type="checkbox" id="tp" checked> Можно телепортироваться в Гавань</label>
+        <label class="inline">Секунд на одну победу над Коршаком
+          <input type="number" id="sec" min="10" max="600" step="5" value="75"></label>
+      </form>
+
+      <div class="panel result" aria-live="polite">
+        <div class="totals">
+          <div><b id="tKills">0</b><span>побед</span></div>
+          <div><b id="tTime">0</b><span>примерно</span></div>
+          <div><b id="tTp">0</b><span>телепортов</span></div>
+        </div>
+        <ol id="steps" class="steps"></ol>
+        <p id="warn" class="warn" hidden></p>
+        <button type="button" id="next" class="primary">Сделать следующий шаг</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="map">
+    <h2>Карта и тренажёр</h2>
+    <p>Нажмите комнату на карте, чтобы выбрать цель. Панель справа работает как игра: отмечайте победы и проходите двери, а маршрут будет пересчитываться.</p>
+    <div class="board">
+      <figure class="panel mapbox">
+        <div class="scroll"><svg id="svg" viewBox="0 0 900 730" role="img" aria-label="Карта поместья: комнаты, двери и текущий маршрут"></svg></div>
+        <figcaption><span class="key k-here"></span> вы здесь <span class="key k-goal"></span> цель <span class="key k-route"></span> маршрут <span class="key k-open"></span> дверь открыта</figcaption>
+      </figure>
+      <div class="panel sim">
+        <div class="here"><div><span class="lab">Вы здесь</span><b id="sName"></b><span id="sStep" class="sub"></span></div><svg id="dial" viewBox="0 0 120 120" role="img" aria-label="Смещение стрелок"></svg></div>
+        <ul id="doors" class="doors"></ul>
+        <div class="acts">
+          <button type="button" id="kill" class="primary">Коршак повержен</button>
+          <button type="button" id="tele" class="ghost">Телепорт в Гавань</button>
+          <button type="button" id="reset" class="ghost">Заново</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="rules">
+    <h2>Как работают часы</h2>
+    <ol class="rules">
+      <li><span><strong>Дверь открыта только в <span class="clock open">00:00</span>.</strong> В остальное время игра отвечает «Невозможно попасть в локацию. На часах 06:00.» Это бесплатная проверка: вы никуда не двигаетесь.</span></li>
+      <li><span><strong>Стрелки у всех дверей двигаются вместе.</strong> У каждой двери есть своё начальное время, а общее скрытое смещение прибавляется ко всем сразу.</span></li>
+      <li><span><strong>Только победа над Коршаком двигает стрелки.</strong> На сколько, зависит от клетки, где вы стоите: от +2 до +8 часов. Другие монстры и побег не считаются.</span></li>
+      <li><span><strong>Дверь и лестница сбрасывают смещение.</strong> Любой проход внутри поместья обнуляет его, и новая клетка показывает начальные времена.</span></li>
+      <li><span><strong>Телепорт и выход смещение сохраняют.</strong> Оно уезжает с вами, переживает лечение и бой с тренером, а при возвращении в Холл прибавляется к его дверям.</span></li>
+    </ol>
+    <p class="formula"><b>Побед до открытия = (24 − час двери) ÷ шаг клетки.</b> Дверь на 06:00 в Холле, шаг +6: (24 − 6) ÷ 6 = 3.</p>
+    <blockquote>Стрелки на всех дверных часах пришли в движение и поменяли своё положение.</blockquote>
+    <p>Это сообщение появляется после каждой победы. Ловить Коршака нельзя («Запрещена»): L80–83, тип Психический, первым ходом часто ставит «Магический плащ». Обычно это примерно каждый четвёртый дикий монстр, но бывают серии: на втором этаже он попадался и реже, чем раз из десяти.</p>
+  </section>
+
+  <section id="traps">
+    <h2>Ловушки и приёмы</h2>
+    <div class="cards">
+      <article><h3>Лишняя победа</h3><p>Дверь на 00:00 надо нажать сразу. Ещё один Коршак уведёт стрелки дальше, и придётся делать полный круг.</p></article>
+      <article><h3>Смещение, которое не сходится</h3><p>С +4 на часах двери Холла показывают 16:00 и 10:00, и шаг +6 никогда не приведёт их к полуночи. Сходите по лестнице наверх и обратно: это бесплатно и сбрасывает всё.</p></article>
+      <article><h3>Дверь, стоящая на 00:00</h3><p>Дверь Гостиной в Холл начинает с 00:00 и всё равно закрыта. Стрелки должны прийти к полуночи сами, поэтому после входа она требует трёх побед.</p></article>
+      <article><h3>Настройка времени заранее</h3><p>Три победы в Кухне дают +12. Телепорт, вход в Холл, и хватит одной победы, чтобы открыть Кухню и Комнату для прислуги.</p></article>
+      <article><h3>Тупики: телепорт вместо 10 побед</h3><p>Чулан, Чердак и Кладовая имеют шаг +2 и одну дверь на 04:00. Пешком оттуда выходить 10 побед, телепорт стоит ноль.</p></article>
+      <article><h3>Лечение по дороге</h3><p>Телепорт ведёт в Гавань, Монстроцентр рядом, до Холла две локации. Круг занимает около 20 секунд, но комнату придётся открывать заново. Лечитесь до длинного участка.</p></article>
+    </div>
+  </section>
+
+  <section id="tables">
+    <h2>Все комнаты</h2>
+    <p>Сколько побед нужно, чтобы дойти из Гавани со сброшенными часами, и сколько стоит выйти без телепорта. Нажмите строку, чтобы построить маршрут.</p>
+    <div class="tablewrap"><table id="tRooms"><thead><tr><th>Комната</th><th>Шаг</th><th>Побед из Гавани</th><th>Выход пешком</th></tr></thead><tbody></tbody></table></div>
+    <details><summary>Все двери и начальное время</summary><div class="tablewrap"><table id="tDoors"><thead><tr><th>Откуда</th><th>Двери</th></tr></thead><tbody></tbody></table></div></details>
+  </section>
+
+  <section id="algo">
+    <h2>Как считается маршрут</h2>
+    <p>Маршрут ищет алгоритм Дейкстры. Каждое положение игрока описывается тремя числами: клетка, смещение стрелок от 0 до 23 и была ли победа после сброса. Всего таких положений около восьмисот.</p>
+    <ul>
+      <li><b>Победа</b> прибавляет шаг клетки к смещению.</li>
+      <li><b>Дверь</b> доступна, только если начальное время плюс смещение даёт 00:00, и обнуляет смещение.</li>
+      <li><b>Лестница</b> доступна всегда и обнуляет смещение.</li>
+      <li><b>Телепорт и выход</b> ничего не обнуляют, поэтому алгоритм сам находит приёмы с заранее настроенным временем.</li>
+    </ul>
+    <p>Главная цена маршрута — победы, потому что они занимают почти всё время. Из маршрутов с равным числом побед выбирается тот, где меньше кликов.</p>
+    <h3>Что ещё не проверено</h3>
+    <ul>
+      <li>Шаг Спальни взят из заметок 2 ноября (+4). Комната пройдена, но шаг не перемерен.</li>
+      <li>Что дверь Гостиной в Холл откроется именно после полного круга, это вывод из модели. Открытие своими глазами не видели.</li>
+    </ul>
+  </section>
+</main>
+<script src="solver.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
