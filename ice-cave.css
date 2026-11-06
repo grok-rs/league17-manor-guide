@@ -1,0 +1,34 @@
+.ic-wrap{max-width:860px}
+.ic-list{list-style:none;padding:0;display:grid;gap:10px;counter-reset:r;max-width:76ch}
+.ic-list li{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:baseline;counter-increment:r}
+.ic-list li::before{content:counter(r);font:700 22px var(--display);color:var(--brass)}
+.ic-text{max-width:70ch}
+.ic-fig{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px;overflow-x:auto}
+.ic-fig svg{display:block;width:100%;min-width:640px;height:auto}
+.ic-rock{fill:var(--panel);stroke:var(--line);stroke-width:1.5}
+.ic-ledge{fill:var(--brass)}.ic-goal{fill:var(--trap)}.ic-floor{fill:var(--fg)}
+.ic-climb{fill:none;stroke:var(--brass);stroke-width:2}
+.ic-dot{fill:none;stroke:var(--fg);stroke-width:1.5;stroke-dasharray:1 5;stroke-linecap:round}
+.ic-solid{fill:none;stroke:var(--fg);stroke-width:1.5}
+.ic-dash{fill:none;stroke:var(--muted);stroke-width:1.5;stroke-dasharray:5 5}
+.ic-unk{fill:none;stroke:var(--trap);stroke-width:1.5;stroke-dasharray:5 4}
+.ic-box{fill:var(--card);stroke:var(--trap);stroke-width:1.5;stroke-dasharray:5 4}
+.ic-t{fill:var(--fg);font:400 13px var(--body)}
+.ic-b{fill:var(--fg);font:600 13.5px var(--body)}
+.ic-s{fill:var(--muted);font:400 12px var(--body)}
+.ic-w{fill:var(--trap);font:600 13px var(--body)}
+.ic-bars{display:grid;gap:8px;max-width:560px}
+.ic-bar{display:grid;grid-template-columns:128px 1fr 34px;gap:10px;align-items:center;font-size:14px}
+.ic-track{background:var(--panel);border-radius:2px}
+.ic-bar i{display:block;height:13px;border-radius:2px;background:var(--trap)}
+.ic-bar.up i{background:var(--brass)}.ic-bar.stay i{background:var(--muted)}
+.ic-bar b{font:500 13px var(--mono);text-align:right}
+.ic-tbl{overflow-x:auto;border:1px solid var(--line);border-radius:8px;background:var(--card)}
+.ic-tbl table{border-collapse:collapse;width:100%;font-size:15px}
+.ic-tbl th{font-size:13px;font-weight:600;color:var(--muted);text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ic-tbl td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+.ic-tbl tr:last-child td{border-bottom:0}
+.ic-tbl .num{font-family:var(--mono);font-size:13.5px;white-space:nowrap}
+.ic-note{font-size:14px;color:var(--muted);max-width:70ch}
+.ic-link{font-size:14px}
+.ic-link a,.head a{color:var(--brass)}
